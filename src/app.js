@@ -3,13 +3,19 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
+const allowedFrontendOrigins = new Set(
+  [
+    "https://ai-interview-frontend-steel.vercel.app",
+    process.env.FRONTEND_ORIGIN,
+  ].filter(Boolean),
+);
 
 app.use(
   cors({
     origin: (origin, callback) => {
       const isLocalFrontend =
         !origin || /^http:\/\/localhost:\d+$/.test(origin);
-      const isConfiguredFrontend = origin === process.env.FRONTEND_ORIGIN;
+      const isConfiguredFrontend = allowedFrontendOrigins.has(origin);
 
       callback(null, isLocalFrontend || isConfiguredFrontend);
     },
